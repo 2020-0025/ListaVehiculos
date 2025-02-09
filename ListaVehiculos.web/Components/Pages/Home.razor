@@ -1,4 +1,117 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
-<PageTitle>Vehiculos</PageTitle>
+@using ListaVehiculos.web.Application.Services
+@inject IVehicleService vehicleService
 
+
+<PageTitle>Vehículos</PageTitle>
+
+<h1 style="text-align:center;color:black; font-size:25px"> <strong>REGISTRO DE VEHÍCULOS</strong> </h1><br />
+
+<div id="container-1" style="display:flex; align-items:baseline; margin-left:10% ">
+
+    <div class="form-group mb-2" style="margin-right:10px">
+        <label for="tarea"> <strong>No. Placa</strong> </label>
+        <input @bind="Vehiculo.Placa" type="text" class="form-control"
+               placeholder="No. de placa del vehículo" style="width:auto" />
+    </div>
+
+    <div class="form-group mb-2" style="margin-right:10px">
+        <label for="tarea"> <strong>Marca</strong> </label>
+        <input @bind="Vehiculo.Marca" type="text" class="form-control"
+               placeholder="Marca del vehículo" style="width:auto" />
+    </div>
+
+    <div class="form-group mb-2" style="margin-right:10px">
+        <label for="tarea"> <strong>Tipo</strong> </label>
+        <input @bind="Vehiculo.Tipo" type="text" class="form-control"
+               placeholder="Tipo de vehículo" style="width:auto" />
+    </div>
+
+    
+
+</div>
+
+<div id="container-2" style="display:flex; align-items:baseline; margin-left:10%">
+
+    <div class="form-group mb-2" style="margin-right:10px">
+        <label for="tarea"> <strong>Modelo</strong> </label>
+        <input @bind="Vehiculo.Modelo" type="text" class="form-control"
+               placeholder="Modelo del vehículo" style="width:auto" />
+    </div>
+
+    <div class="form-group mb-2" style="margin-right:10px">
+        <label for="tarea"> <strong>Fabricación</strong> </label>
+        <input @bind="Vehiculo.Fabricacion" type="text" class="form-control"
+               placeholder="Año del vehículo" style="width:auto" />
+    </div>
+
+    <div class="form-group mb-2" style="margin-right:10px">
+        <label for="tarea"> <strong>Color</strong> </label>
+        <input @bind="Vehiculo.Color" type="text" class="form-control"
+               placeholder="Color del vehículo" style="width:auto" />
+    </div>
+
+</div>
+
+
+
+<div class="form-group mb-3" style="margin-left:40%">
+    <label for="tarea"> <strong>Fecha de registro</strong> </label>
+    <input @bind="Vehiculo.Fecha" type="date" class="form-control" style="width:auto" />
+</div>
+
+<span class="btn btn-primary" style="margin-left:44%" @onclick="Agregar">Agregar</span>
+
+<div class="card mt-3">
+    <div class="card-header" style="text-align:center; font-size:25px">
+        <strong>Vehículos Registrados</strong>
+    </div>
+    <div class="card-body" style="background-color:darkblue">
+        <div class="container">
+            @if (ListaVehiculos.Any())
+            {
+                @foreach (var t in ListaVehiculos)
+                {
+                    <VehicleViewer Vehiculo="t" OnEliminar="()=>Eliminar(t.Id)" />
+                }
+            }
+        </div>
+    </div>
+</div>
+
+
+@code{
+
+    public VehicleDto Vehiculo { get; set; } = new();
+    public List<VehicleDto> ListaVehiculos { get; set; } = [];
+
+    /// <summary>
+    /// Evento que se ejecuta cuando se carga el componente
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+        ListaVehiculos = await vehicleService.Consultar();
+    }
+    /// <summary>
+    /// Agrega un vehiculo
+    /// </summary>
+    async void Agregar()
+    {
+        ListaVehiculos = await vehicleService.Guardar(Vehiculo);
+        StateHasChanged();
+    }
+    /// <summary>
+    /// Elimina un vehiculo
+    /// </summary>
+    /// <param name="Id"></param>
+    async void Eliminar(int Id)
+    {
+        ListaVehiculos = await vehicleService.Eliminar(Id);
+        StateHasChanged();
+    }
+
+
+}

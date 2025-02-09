@@ -1,10 +1,14 @@
+using ListaVehiculos.web.Application.Services;
 using ListaVehiculos.web.Components;
+using ListaVehiculos.web.Infraestructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddScoped(typeof(IJsonFileService<>), typeof(JsonFileService<>));
+builder.Services.AddScoped<IVehicleService, VehicleService>();
 
 var app = builder.Build();
 
